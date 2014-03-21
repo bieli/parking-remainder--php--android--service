@@ -3,7 +3,6 @@
 require 'vendor/autoload.php';
 require 'vendor/slim/slim/Slim/Slim.php';
 
-
 define(LOCATIONS_DB, './locations.db');
 define(POSITION_DB, './position.db');
 
