@@ -1,5 +1,6 @@
 {
-    "require": {
-        "slim/slim": "2.*"
-    }
+  "require": {
+    "zircote/swagger-php": "*",
+    "slim/slim": "2.*"
+  }
 }
