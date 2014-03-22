@@ -1,12 +1,11 @@
 <?php
+require '../vendor/autoload.php';
+require '../vendor/slim/slim/Slim/Slim.php';
+require '../vendor/zircote/swagger-php/library/Swagger/Swagger.php';
 
-require 'vendor/autoload.php';
-require 'vendor/slim/slim/Slim/Slim.php';
-require 'vendor/zircote/swagger-php/library/Swagger/Swagger.php';
-
-define('API_KEY_DB', './apikey.db');
-define('LOCATIONS_DB', './locations.db');
-define('POSITION_DB', './position.db');
+define('API_KEY_DB', '../data/apikey.db');
+define('LOCATIONS_DB', '../data/locations.db');
+define('POSITION_DB', '../data/position.db');
 define('DATA_DALIMETER', ',');
 
 
