@@ -9,6 +9,9 @@ define('LOCATIONS_DB', './locations.db');
 define('POSITION_DB', './position.db');
 define('DATA_DALIMETER', ',');
 
+
+date_default_timezone_set('UTC');
+
 $app = new \Slim\Slim();
 
 //use Swagger\Swagger;
@@ -99,12 +102,15 @@ $app->group('/api', function () use ($app) {
 
       if (empty($app->response->headers->get('X-Status-Reason'))) {
         try {
-          $positionId = file_get_contents(POSITION_DB);
-          if ( false === $positionId  ) {
+          $locationId = file_get_contents(POSITION_DB);
+          if ( false === $locationId  ) {
             throw new Exception('Problem with read position from file!');
           }
 
-          echo json_encode(array('positionId' => (integer) $positionId));
+          echo json_encode(array(
+            'locationId' => (integer) $locationId,
+            'modified' => (string) date("Y-m-d H:i:s", filemtime(POSITION_DB))
+          ));
         } catch (Exception $e) {
           $app->response()->status(400);
           $app->response()->header('X-Status-Reason', $e->getMessage());
