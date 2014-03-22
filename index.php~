@@ -73,7 +73,7 @@ $app->group('/api', function () use ($app) {
       if (empty($app->response->headers->get('X-Status-Reason'))) {
         $locationsData = file_get_contents(LOCATIONS_DB);
         if ( false === $locationsData  ) {
-          throw new Exception('Problem with read locations from file!');
+          throw new Exception('Problem with read position from file!');
         }
 
         $locationsRows = explode("\n", $locationsData);
