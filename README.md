@@ -1,5 +1,5 @@
-Parking remainder PHP Slim framework webservice example
-=======================================================
+Parking remainder app. based on PHP Slim framework with RESTfull webservice example
+===================================================================================
 
 General info
 ------------
@@ -11,16 +11,18 @@ Specification
 
 GET /locations
 
-['a', 'b', 'c']
+["1":"a", "2":"b", "3":"c"]
+
 
 GET /postion
 
-{"positionId":'a'}
+{"positionId":"1"}
+
 
 
 PUT /position
 
-payload/body for change position
+Set payload/body for change position
 
-{"positionId":'a'}
+{"positionId":"2"}
 
