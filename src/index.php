@@ -1,24 +1,23 @@
 <?php
-require '../vendor/autoload.php';
-require '../vendor/slim/slim/Slim/Slim.php';
-require '../vendor/zircote/swagger-php/library/Swagger/Swagger.php';
 
-define('API_KEY_DB', '../data/apikey.db');
-define('LOCATIONS_DB', '../data/locations.db');
-define('POSITION_DB', '../data/position.db');
-define('DATA_DALIMETER', ',');
+if (!defined('SLIM_TEST_ENV')) {	
+  require '../vendor/autoload.php';
+  require '../vendor/slim/slim/Slim/Slim.php';
+}
 
+if (!defined('DATA_DALIMETER')) {	
+	define('API_KEY_DB', '../data/apikey.db');
+	define('LOCATIONS_DB', '../data/locations.db');
+	define('POSITION_DB', '../data/position.db');
+	define('DATA_DALIMETER', ',');
+}
 
 date_default_timezone_set('UTC');
 
-$app = new \Slim\Slim();
-
-//use Swagger\Swagger;
-//use Swagger\Annotations as SWG;
-
-//$swagger = new Swagger('/api/docs');
-//header("Content-Type: application/json");
-//echo $swagger->getResource('/locations', array('output' => 'json'));
+if (!defined('SLIM_TEST_ENV')) {
+  $app = new \Slim\Slim();
+  $app->config('debug', false);
+}
 
 /**
  * @SWG\Resource(
@@ -31,8 +30,12 @@ $app = new \Slim\Slim();
 $app->group('/api', function () use ($app) {
 
     $app->response()->header('Content-Type', 'application/vnd.parking.remainder-v1.0+json');
-
-    $apiKey = $app->request->headers->get('X-REST-API-Key');
+//TODO: update integration tests with special auth header
+    if (!defined('SLIM_TEST_ENV')) {
+        $apiKey = $app->request->headers->get('X-REST-API-Key');
+    } else {
+        $apiKey = 'TEST123';
+    }
 
     /**
      * @SWG\ResponseMessage(code=400, message="Problem with read API KEY from file!")
@@ -41,27 +44,16 @@ $app->group('/api', function () use ($app) {
     /**
      * @SWG\ResponseMessage(code=401, message="Problem with access by API KEY!")
      */
-
-    $appApiKey = file_get_contents(API_KEY_DB);
-    if ( false === $appApiKey  ) {
-        $app->response()->status(400);
-        $app->response()->header('X-Status-Reason', 'Problem with read API KEY from file!');
-    } elseif ( trim($apiKey) !== trim($appApiKey) ) {
-        $app->response()->status(401);
-        $app->response()->header('X-Status-Reason', 'Problem with access by API KEY!');
+    if (!defined('SLIM_TEST_ENV')) {
+      $appApiKey = file_get_contents(API_KEY_DB);
+      if ( false === $appApiKey  ) {
+          $app->response()->status(400);
+          $app->response()->header('X-Status-Reason', 'Problem with read API KEY from file!');
+      } elseif ( trim($apiKey) !== trim($appApiKey) ) {
+          $app->response()->status(401);
+          $app->response()->header('X-Status-Reason', 'Problem with access by API KEY!');
+      }
     }
-/*
-    $app->get('/docs', function () use ($app) {
-      use Swagger\Swagger;
-
-      $swagger = new Swagger('/api/docs');
-
-      header("Content-Type: application/json");
-
-      echo $swagger->getResource('/locations', array('output' => 'json'));
-    });
-*/
-
     /**
      * @SWG\Operation(
      *     method="GET", summary="get all locations", notes="Returns a locations based on ID"
@@ -126,19 +118,27 @@ $app->group('/api', function () use ($app) {
 
       if (empty($app->response->headers->get('X-Status-Reason'))) {
         try {
-          $request = $app->request();
-          $body = $request->getBody();
-          $input = json_decode($body); 
-
-          $locationId = (integer) $input->locationId;
-
-          if ( false === file_put_contents(POSITION_DB, $locationId) ) {
-            throw new Exception('Problem with update position in file!');
+          $locationId = $app->request()->params('locationId');
+          if (empty(trim($locationId))) {
+            throw new Exception('Need "locationId" key with value !');
           }
 
-          echo json_encode(array('locationId' => $locationId));
+          $readLocationId = file_get_contents(POSITION_DB);
+          if (false === $readLocationId) {
+            throw new Exception('Problem with read position from file!');
+          }
+
+          if (trim($readLocationId) === trim($locationId)) {
+            throw new Exception('Value "locationId" already exists !', 303); 
+          } else {
+            if (false === file_put_contents(POSITION_DB, $locationId)) {
+              throw new Exception('Problem with update position in file!');
+            }
+
+            echo json_encode(array('locationId' => $locationId));
+          }
         } catch (Exception $e) {
-          $app->response()->status(400);
+          $app->response()->status(!empty($e->getCode()) ? $e->getCode() : 400);
           $app->response()->header('X-Status-Reason', $e->getMessage());
         }
       }
@@ -146,6 +146,7 @@ $app->group('/api', function () use ($app) {
 
 });
 
-
-$app->run();
+if (!defined('SLIM_TEST_ENV')) {
+  $app->run();
+}
 
