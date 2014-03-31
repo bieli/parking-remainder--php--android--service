@@ -128,7 +128,7 @@ $app->group('/api', function () use ($app) {
             throw new Exception('Problem with read position from file!');
           }
 
-          if (trim($readLocationId) === trim($locationId)) {
+          if ((int) $readLocationId === (int) $locationId) {
             throw new Exception('Value "locationId" already exists !', 303); 
           } else {
             if (false === file_put_contents(POSITION_DB, $locationId)) {
