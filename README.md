@@ -1,6 +1,8 @@
 Parking remainder app. based on PHP Slim framework with RESTfull webservice example
 ===================================================================================
 
+ [![Build Status](https://travis-ci.org/bieli/parking-remainder--php--android--service.png?branch=master)](http://travis-ci.org/bieli/parking-remainder--php--android--service)
+
 General info
 ------------
 This is experiment with RESTfull light web service created with PHP >= 5.3 programming language.
