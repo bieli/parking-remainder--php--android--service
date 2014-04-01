@@ -40,19 +40,14 @@ class SetPositionTest extends Slim_Framework_TestCase
 
   public function testShouldNotSetPositionWithExistsLocationId()
   {
-    $this->get('/api/position');
-    
-    $this->assertEquals(200, $this->response->status());
-    preg_match(
-      '~{"locationId":(\d+),"modified":"(\d\d\d\d[-]\d\d[-]\d\d \d\d[:]\d\d[:]\d\d)"}~',
-      $this->response->body(),
-      $results        
-    );
-
-    $this->assertTrue(0 < $results[1]);
-
     // given
-    $parameters = array('locationId' => (int) $results[1]);                                                    
+    $locationId = 123;
+
+    if (false === file_put_contents(POSITION_DB, $locationId)) {
+      throw new Exception('Problem with update position in file!');
+    }
+
+    $parameters = array('locationId' => $locationId);                                                    
 
     // when
     $this->put(
