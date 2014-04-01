@@ -1,0 +1,20 @@
+language: php
+
+php:
+ - 5.3
+ - 5.4
+ - 5.5
+
+branches:
+ only:
+  - master
+
+before_script:
+ - composer install --dev --verbose
+
+script:
+ - cd tests
+ - bin/phpunit --bootstrap bootstrap.php integration/GetLocationsTest.php
+ - bin/phpunit --bootstrap bootstrap.php integration/GetPositionTest.php
+ - bin/phpunit --bootstrap bootstrap.php integration/SetPositionTest.php
+
