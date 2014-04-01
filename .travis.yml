@@ -10,11 +10,13 @@ branches:
   - master
 
 before_script:
+ - composer self-update
  - composer install --dev --verbose
+ - composer update
 
 script:
  - cd tests
- - bin/phpunit --bootstrap bootstrap.php integration/GetLocationsTest.php
- - bin/phpunit --bootstrap bootstrap.php integration/GetPositionTest.php
- - bin/phpunit --bootstrap bootstrap.php integration/SetPositionTest.php
+ - php ../vendor/phpunit/phpunit/phpunit --bootstrap bootstrap.php integration/GetLocationsTest.php
+ - php ../vendor/phpunit/phpunit/phpunit --bootstrap bootstrap.php integration/GetPositionTest.php
+ - php ../vendor/phpunit/phpunit/phpunit --bootstrap bootstrap.php integration/SetPositionTest.php
 
