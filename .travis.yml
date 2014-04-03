@@ -16,6 +16,7 @@ before_script:
 
 script:
  - cd tests
+ - pwd
  - php ../vendor/phpunit/phpunit/phpunit --bootstrap bootstrap.php integration/GetLocationsTest.php
  - php ../vendor/phpunit/phpunit/phpunit --bootstrap bootstrap.php integration/GetPositionTest.php
  - php ../vendor/phpunit/phpunit/phpunit --bootstrap bootstrap.php integration/SetPositionTest.php
